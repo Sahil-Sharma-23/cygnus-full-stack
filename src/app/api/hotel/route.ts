@@ -11,12 +11,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl || "", supabaseAnonKey || "");
 
-export async function GET(request: NextRequest) {
-  const userId = request.nextUrl.searchParams.get("userId");
-  console.log("userId: ", userId);  // DEBUG
-  
+// Get all hotels
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(request: NextRequest) {  
   try {
-    const { data, error } = await supabase.from("users").select("*").eq("id", userId);
+    const { data, error } = await supabase.from("hotels").select("*");
 
     if (error) {
       console.error("Supabase Error:", error);
