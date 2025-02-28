@@ -49,9 +49,10 @@ export async function PUT(request: NextRequest) {
   } = body; // Extract necessary data
 
   try {
-    const { data, error } = await supabase
+    const {  error } = await supabase
       .from("users")
-      .update({
+      .upsert({
+        id,
         email,
         username,
         password_hash,
@@ -66,7 +67,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json({ status: 204 });
   } catch (error) {
     console.error("Server Error:", error);
     return NextResponse.json(

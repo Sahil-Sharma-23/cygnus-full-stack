@@ -83,15 +83,15 @@ export default function UserProfilePage() {
   }, [router])
 
   async function handleFormSubmit(e: FormEvent) {
-    const userId = localStorage.getItem("userId");
     e.preventDefault();
+    const userId = localStorage.getItem("userId");
     setIsFormLoading(true); // Set form state to loading
 
     const registerPayload = {
       id: Number(userId),
       email: formState.email,
       username: formState.username,
-      password: formState.password,
+      password_hash: formState.password,
       gender: formState.gender,
       date_of_birth: formState.dateOfBirth,
       full_name: formState.fullName,
@@ -111,8 +111,9 @@ export default function UserProfilePage() {
       return;
     }
 
-    toast.success("User data updated successfully.");
+    toast.success("Profile updated.");
     setIsFormLoading(false);
+    router.push("/");
   }
 
   const handleFromDateSelect = (date: Date | null) => {
@@ -228,7 +229,7 @@ export default function UserProfilePage() {
               onChange={
                 (e: ChangeEvent<HTMLInputElement>) =>
                   setFormState({ ...formState, password: e.target.value })}
-              type="password"
+              type="text"
             />
           }
         </div>
