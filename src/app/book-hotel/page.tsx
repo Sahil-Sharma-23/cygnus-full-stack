@@ -32,7 +32,7 @@ export default function BookHotelPage() {
       }
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/hotel`, {
+        const response = await fetch(`/api/hotel`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ export default function UserProfileForm(params: UserProfileFormProps) {
   useEffect(() => {
     const fetchUserData = async (userId: number) => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user`, {
+        const response = await fetch(`/api/user`, {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
