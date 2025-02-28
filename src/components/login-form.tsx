@@ -43,7 +43,7 @@ export default function LoginForm() {
     <>
       <form onSubmit={handleFormSubmit} className="grid gap-4">
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Email: </Label>
+          <Label className="w-24 pr-3">Email ID: </Label>
           <Input
             placeholder="Email"
             type="email"
@@ -54,13 +54,13 @@ export default function LoginForm() {
         </div>
 
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Password: </Label>
+          <Label className="w-24 pr-3">Password: </Label>
           <Input
             placeholder="Password"
+            type="password"
             onChange={
               (e: ChangeEvent<HTMLInputElement>) =>
                 setFormState({ ...formState, password: e.target.value })}
-            type="password"
           />
         </div>
 

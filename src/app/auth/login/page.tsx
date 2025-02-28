@@ -1,12 +1,11 @@
 import React from 'react'
 import LoginForm from '@/components/login-form'
-import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 
 export default function LoginPage() {
   return (
     <>
-      <div className="w-full grid place-items-center min-h-screen">
+      <div className="w-full grid place-items-center">
       <div className="flex items-center justify-center py-12 col-span-5">
         <div className="mx-auto grid max-w-2xl w-full gap-6 px-4">
           <div className="grid gap-2 text-center">
@@ -17,10 +16,7 @@ export default function LoginPage() {
               Enter Your Credentials to Proceed...
             </p>
           </div>
-          <Separator />
-
           <LoginForm />
-
           <div className="text-center text-sm space-y-2">
             Already have an account?&nbsp;
             <Link
