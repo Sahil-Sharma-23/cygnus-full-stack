@@ -6,12 +6,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Calendar } from "./ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { DayPicker } from "react-day-picker";
 
 type RegisterFormState = {
   email: string;
@@ -32,8 +32,17 @@ export default function SignupForm() {
     fullName: "",
     password: ""
   });
-  const [date, setDate] = React.useState<Date>();
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    const id = localStorage.getItem("userId")
+
+    if (token || id) {
+      toast.info("User already logged in");
+      router.replace("/book-hotel");
+    }
+  }, [router])
 
   async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
@@ -67,13 +76,14 @@ export default function SignupForm() {
     router.replace("/auth/login");
   }
 
-  useEffect(() => {
-    setFormState({
-      ...formState,
-      dateOfBirth: date
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date])
+  const handleFromDateSelect = (date: Date | null) => {
+    if (date) {
+      setFormState((prevState) => ({
+        ...prevState,
+        dateOfBirth: date,
+      }));
+    }
+  };
 
   return (
     <>
@@ -132,19 +142,19 @@ export default function SignupForm() {
                 variant={"outline"}
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
+                  !formState.dateOfBirth && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                {formState.dateOfBirth ? format(formState.dateOfBirth, "PPP") : <span>Pick a date</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
-              <Calendar
+              <DayPicker
                 mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
+                selected={formState?.dateOfBirth}
+                onSelect={(day) => handleFromDateSelect(day as Date | null)}
+                className="p-2"
               />
             </PopoverContent>
           </Popover>

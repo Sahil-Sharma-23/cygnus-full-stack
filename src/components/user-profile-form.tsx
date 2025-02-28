@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, LoaderCircle } from "lucide-react";
@@ -13,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { toast } from 'sonner';
 import { Skeleton } from './ui/skeleton';
 import { useRouter } from 'next/navigation';
+import { DayPicker } from 'react-day-picker';
 
 type ProfileForm = {
   email: string;
@@ -77,7 +77,7 @@ export default function UserProfileForm(params: UserProfileFormProps) {
 
     fetchUserData(Number(params.userId));
   }, [params, router])
-  
+
   async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
     setIsFormLoading(true); // Set form state to loading
@@ -110,13 +110,14 @@ export default function UserProfileForm(params: UserProfileFormProps) {
     setIsFormLoading(false);
   }
 
-  useEffect(() => {
-    setFormState({
-      ...formState,
-      dateOfBirth: date
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date])
+  const handleFromDateSelect = (date: Date | null) => {
+    if (date) {
+      setFormState((prevState) => ({
+        ...prevState,
+        dateOfBirth: date,
+      }));
+    }
+  };
 
   return (
     <form onSubmit={handleFormSubmit} className="grid gap-4">
@@ -200,11 +201,11 @@ export default function UserProfileForm(params: UserProfileFormProps) {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
-              <Calendar
+              <DayPicker
                 mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
+                selected={formState?.dateOfBirth}
+                onSelect={(day) => handleFromDateSelect(day as Date | null)}
+                className="p-2"
               />
             </PopoverContent>
           </Popover>
