@@ -2,25 +2,15 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 import { useUserLoginStatus } from '@/app/context/UserLoginStatusContext';
 
 export default function Navbar() {
-  const [userId, setUserId] = useState<number | undefined>();
   const router = useRouter();
   const { isUserLoggedIn, setIsUserLoggedIn } = useUserLoginStatus();
 
-  useEffect(() => {
-    const localUserId = localStorage.getItem('userId');
-    if(localUserId) {
-      setUserId(Number(localUserId));
-    } else {
-      setUserId(undefined);
-    }
-  }, [])
-  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -65,7 +55,7 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <Link href={`/user/profile/${userId}`}>
+            <Link href={`/user/profile`}>
               <Button variant={"ghost"}>Profile</Button>
             </Link>
           </li>
