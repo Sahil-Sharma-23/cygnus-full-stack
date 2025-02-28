@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,28 +11,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl || "", supabaseAnonKey || "");
 
-// Get all hotels
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: NextRequest) {
-  const token = request.headers.get("authorization")?.split(" ")[1];
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const jwtSecret = process.env.JWT_SECRET;
-  if (!jwtSecret) {
-    return NextResponse.json(
-      { error: "JWT secret missing from environment variables" },
-      { status: 500 },
-    );
-  }
   try {
-    jwt.verify(token, jwtSecret);
-  } catch (error) {
-    console.error("JWT verification error:", error);
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const { data, error } = await supabase.from("hotels").select("*");
+    const { data, error } = await supabase.from("users").select("*");
 
     if (error) {
       console.error("Supabase Error:", error);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import jwt from "jsonwebtoken";
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -36,7 +37,21 @@ export async function POST(request: NextRequest) {
     }
 
     if (data) {
-      return NextResponse.json(data, { status: 200 }); // 200 OK
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        return NextResponse.json(
+          { error: "JWT secret is not defined" },
+          { status: 500 },
+        );
+      }
+
+      const token = jwt.sign(
+        { userId: data.id, username: data.username },
+        jwtSecret,
+        { expiresIn: "1h" },
+      );
+      const payload = { data, token };
+      return NextResponse.json(payload, { status: 200 });
     } else {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

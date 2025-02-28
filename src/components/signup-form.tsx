@@ -10,6 +10,8 @@ import { Calendar } from "./ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type RegisterFormState = {
   email: string;
@@ -31,6 +33,7 @@ export default function SignupForm() {
     password: ""
   });
   const [date, setDate] = React.useState<Date>();
+  const router = useRouter();
 
   async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
@@ -39,7 +42,7 @@ export default function SignupForm() {
     const registerPayload = {
       email: formState.email,
       username: formState.username,
-      password: formState.password,
+      password_hash: formState.password,
       gender: formState.gender,
       date_of_birth: formState.dateOfBirth,
       full_name: formState.fullName,
@@ -53,8 +56,15 @@ export default function SignupForm() {
       body: JSON.stringify(registerPayload),
     });
 
-    console.log(response);
+    if (!response.ok) {
+      setIsFormLoading(false);
+      toast.error("Failed to create user.");
+      return;
+    }
+
+    toast.success("User created. Login to continue.");
     setIsFormLoading(false);
+    router.replace("/auth/login");
   }
 
   useEffect(() => {
@@ -69,7 +79,7 @@ export default function SignupForm() {
     <>
       <form onSubmit={handleFormSubmit} className="grid gap-4">
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Name: </Label>
+          <Label className="w-24 pr-3">Name: </Label>
           <Input
             placeholder="Full Name"
             onChange={
@@ -80,7 +90,7 @@ export default function SignupForm() {
         </div>
 
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Email: </Label>
+          <Label className="w-24 pr-3">Email: </Label>
           <Input
             placeholder="Email"
             type="email"
@@ -91,7 +101,7 @@ export default function SignupForm() {
         </div>
 
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Username: </Label>
+          <Label className="w-24 pr-3">Username: </Label>
           <Input
             placeholder="Username"
             onChange={
@@ -100,8 +110,8 @@ export default function SignupForm() {
           />
         </div>
 
-        <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Gender: </Label>
+        <div className="flex items-center">
+          <Label className="w-24 pr-3">Gender: </Label>
           <RadioGroup defaultValue="male">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="male" id="r1" />
@@ -115,13 +125,13 @@ export default function SignupForm() {
         </div>
 
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">DOB: </Label>
+          <Label className="w-24 pr-3">DOB: </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant={"outline"}
                 className={cn(
-                  "w-[280px] justify-start text-left font-normal",
+                  "w-full justify-start text-left font-normal",
                   !date && "text-muted-foreground"
                 )}
               >
@@ -141,7 +151,7 @@ export default function SignupForm() {
         </div>
 
         <div className="flex items-center justify-center">
-          <Label className="w-fit pr-3">Password: </Label>
+          <Label className="w-24 pr-3">Password: </Label>
           <Input
             placeholder="Password"
             onChange={

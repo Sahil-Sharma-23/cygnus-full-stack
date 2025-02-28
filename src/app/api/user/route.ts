@@ -11,12 +11,55 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl || "", supabaseAnonKey || "");
 
-export async function GET(request: NextRequest) {
-  const userId = request.nextUrl.searchParams.get("userId");
-  console.log("userId: ", userId);  // DEBUG
-  
+export async function POST(request: NextRequest) {
+  const body = await request.json(); // Assuming the request body is JSON
+  const { userId } = body; // Extract necessary data
+
   try {
-    const { data, error } = await supabase.from("users").select("*").eq("id", userId);
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId);
+
+    if (error) {
+      console.error("Supabase Error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    console.error("Server Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json(); // Assuming the request body is JSON
+  const {
+    id,
+    email,
+    username,
+    password_hash,
+    gender,
+    date_of_birth,
+    full_name,
+  } = body; // Extract necessary data
+
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        email,
+        username,
+        password_hash,
+        gender,
+        date_of_birth,
+        full_name,
+      })
+      .eq("id", id);
 
     if (error) {
       console.error("Supabase Error:", error);

@@ -5,6 +5,8 @@ import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { LoaderCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type LoginFormState = {
   email: string;
@@ -12,6 +14,8 @@ type LoginFormState = {
 }
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const [isFormLoading, setIsFormLoading] = useState<boolean>(false);
   const [formState, setFormState] = useState<LoginFormState>({
     email: "",
@@ -34,8 +38,15 @@ export default function LoginForm() {
       },
       body: JSON.stringify(loginPayload),
     });
-
-    console.log(await response.json());
+    if (!response.ok) {
+      setIsFormLoading(false);
+      toast.error("Invalid credentials");
+      return;
+    }
+    const resJson = await response.json();
+    localStorage.setItem("userId", resJson.data.id);
+    localStorage.setItem("token", resJson.token);
+    router.push("/book-hotel");
     setIsFormLoading(false);
   }
 
