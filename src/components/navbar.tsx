@@ -5,12 +5,22 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
+import { useUserLoginStatus } from '@/app/context/UserLoginStatusContext';
 
 export default function Navbar() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(false);
+  const [userId, setUserId] = useState<number | undefined>();
   const router = useRouter();
-  const userId = localStorage.getItem('userId');
+  const { isUserLoggedIn, setIsUserLoggedIn } = useUserLoginStatus();
 
+  useEffect(() => {
+    const localUserId = localStorage.getItem('userId');
+    if(localUserId) {
+      setUserId(Number(localUserId));
+    } else {
+      setUserId(undefined);
+    }
+  }, [])
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -18,7 +28,7 @@ export default function Navbar() {
     } else {
       setIsUserLoggedIn(true);
     }
-  }, [])
+  }, [setIsUserLoggedIn])
 
   const handleLogout = () => {
     localStorage.removeItem('token');

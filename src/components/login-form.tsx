@@ -1,12 +1,13 @@
 "use client"
 
-import React, { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useUserLoginStatus } from '@/app/context/UserLoginStatusContext';
 
 type LoginFormState = {
   email: string;
@@ -15,13 +16,23 @@ type LoginFormState = {
 
 export default function LoginForm() {
   const router = useRouter();
-
   const [isFormLoading, setIsFormLoading] = useState<boolean>(false);
   const [formState, setFormState] = useState<LoginFormState>({
     email: "",
     password: ""
   });
+  const { setIsUserLoggedIn } = useUserLoginStatus();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token") 
+    const id = localStorage.getItem("userId")
+
+    if (token || id) {
+      toast.info("User already logged in");
+      router.replace("/book-hotel");
+    }
+  }, [router])
+  
   async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
     setIsFormLoading(true);
@@ -46,8 +57,9 @@ export default function LoginForm() {
     const resJson = await response.json();
     localStorage.setItem("userId", resJson.data.id);
     localStorage.setItem("token", resJson.token);
-    router.push("/book-hotel");
+    setIsUserLoggedIn(true);
     setIsFormLoading(false);
+    router.push("/book-hotel");
   }
 
   return (
